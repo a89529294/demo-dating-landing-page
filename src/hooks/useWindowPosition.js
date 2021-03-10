@@ -1,16 +1,26 @@
 import { useLayoutEffect, useState } from 'react';
 
-export default function useWindowPosition(id) {
+export default function useWindowPosition(id, titleOrCard) {
   const [animation, setAnimation] = useState(false);
 
   useLayoutEffect(() => {
     function updatePosition() {
       const offetSetHeight = window.document.getElementById(id).offsetHeight;
-      console.log(window.pageYOffset);
-      if (window.pageYOffset > offetSetHeight * 0.7) {
-        setAnimation(true);
+      if (titleOrCard === 'title') {
+        if (
+          window.pageYOffset >= offetSetHeight * 0 &&
+          window.pageYOffset < offetSetHeight * 0.2
+        ) {
+          setAnimation(true);
+        } else {
+          setAnimation(false);
+        }
       } else {
-        setAnimation(false);
+        if (window.pageYOffset > offetSetHeight * 0.6) {
+          setAnimation(true);
+        } else {
+          setAnimation(false);
+        }
       }
     }
     window.addEventListener('scroll', updatePosition);
