@@ -13,7 +13,7 @@ import {
 } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 
-const timeoutLength = 1000;
+import useStateWithLabel from '../hooks/useStateWithLabel';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -74,40 +74,153 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const aboutUsTabDatasetId = 'aboutUsTab';
+
 export default function Header() {
   const classes = useStyles();
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up('lg'));
 
-  const [tabIndex, setTabIndex] = useState(null);
+  const [tabIndex, setTabIndex] = useState(false);
+
   const [aboutUsMenuIndex, setAboutUsMenuIndex] = useState(null);
   const [aboutUsAnchorEl, setAboutUsAnchorEl] = useState(null);
-  const [openAboutUsMenu, setOpenAboutUsMenu] = useState(false);
-  const [isMouseOverAboutUsMenu, setIsMouseOverAboutUsMenu] = useState(false);
-  const [isMouseOverAboutUsTab, setIsMouseOverAboutUsTab] = useState(false);
-  const myRef = useRef();
+  const [openAboutUsMenu, setOpenAboutUsMenu] = useStateWithLabel(
+    false,
+    'openAboutUsMenu'
+  );
+  const [isMouseOverAboutUsMenu, setIsMouseOverAboutUsMenu] = useStateWithLabel(
+    false,
+    'isMouseOverAboutUsMenu'
+  );
+  const [isMouseOverAboutUsTab, setIsMouseOverAboutUsTab] = useStateWithLabel(
+    false,
+    'isMouseOverAboutUsTab'
+  );
+  const isMouseOverAboutUsMenuRef = useRef();
 
-  const handleMouseOver = (event) => {
+  const [membersMenuIndex, setMembersMenuIndex] = useState(null);
+  const [membersAnchorEL, setMembersAnchorEL] = useState(null);
+  const [openMembersMenu, setOpenMembersMenu] = useState(false);
+  const [isMouseOverMembersMenu, setIsMouseOverMembersMenu] = useState(false);
+  const [isMouseOverMembersTab, setIsMouseOverMembersTab] = useState(false);
+  const isMouseOverMembersMenuRef = useRef();
+
+  const routes = [
+    {
+      label: '關於我們',
+      onMouseEnter: (e) => {
+        handleMouseOverAboutUsTab(e);
+      },
+      onMouseOut: (e) => {},
+      dataAttribute: aboutUsTabDatasetId,
+    },
+    { label: '活動', to: '/events' },
+    {
+      label: '會員',
+      onMouseEnter: (e) => {
+        handleMouseOverMembersTab(e);
+      },
+      onMouseOut: () => {},
+      dataAttribute: 'membersTab',
+    },
+    { label: '專案', to: '/plans' },
+    { label: '最新消息', to: '/latestNews' },
+  ];
+
+  const aboutUsMenuOptions = [
+    { to: '/about', label: '公司理念' },
+    { to: '/contact', label: '聯絡我們' },
+    { to: '/location', label: '公司地址' },
+  ];
+
+  const membersMenuOptions = [
+    { to: '/members', label: '俊男美女' },
+    { to: 'requirements', label: '入會條件' },
+  ];
+
+  const latestNewsMenuOptions = [
+    { to: '/news', label: '公告' },
+    { to: 'articles', label: '心得文章' },
+  ];
+
+  const handleMouseOverAboutUsTab = (event) => {
     setAboutUsAnchorEl(event.currentTarget);
+    console.log('??');
     setOpenAboutUsMenu(true);
     setIsMouseOverAboutUsTab(true);
+
+    const mousemoveCallback = (e) => {
+      const elements = document.elementsFromPoint(e.clientX, e.clientY);
+
+      const test = elements.some(
+        (ele) =>
+          ele.dataset.id === aboutUsTabDatasetId ||
+          ele.classList.contains('MuiMenu-list')
+      );
+
+      if (!test) {
+        setIsMouseOverAboutUsTab(false);
+        console.log(1);
+        setOpenAboutUsMenu(false);
+        document.removeEventListener('mousemove', mousemoveCallback);
+      }
+    };
+
     setTimeout(() => {
-      if (myRef.current) return;
-      setOpenAboutUsMenu(false);
-      setIsMouseOverAboutUsMenu(false);
-    }, timeoutLength);
+      document.addEventListener('mousemove', mousemoveCallback);
+    }, 100);
   };
 
-  const handleClose = () => {
+  const handleCloseAboutUsMenuOnLeave = () => {
+    setIsMouseOverAboutUsMenu(false);
+
+    const mousemoveCallback = (e) => {
+      const elements = document.elementsFromPoint(e.clientX, e.clientY);
+      console.log(elements);
+      const test = elements.some(
+        (ele) => ele.dataset.id === aboutUsTabDatasetId
+      );
+      if (!test) {
+        setAboutUsAnchorEl(null);
+        setOpenAboutUsMenu(false);
+      }
+      document.removeEventListener('mousemove', mousemoveCallback);
+    };
+
+    setTimeout(() => {
+      document.addEventListener('mousemove', mousemoveCallback);
+    }, 100);
+  };
+
+  const handleCloseAboutUsMenu = () => {
     setAboutUsAnchorEl(null);
     setOpenAboutUsMenu(false);
     setIsMouseOverAboutUsMenu(false);
   };
 
-  const handleMenuItemClick = (e, i) => {
-    handleClose();
+  const handleAboutUsMenuItemClick = (e, i) => {
+    handleCloseAboutUsMenu();
     setAboutUsMenuIndex(i);
     setIsMouseOverAboutUsTab(false);
+  };
+
+  const handleMouseOverMembersTab = (event) => {
+    setMembersAnchorEL(event.currentTarget);
+    setOpenMembersMenu(true);
+    setIsMouseOverMembersTab(true);
+  };
+
+  const handleCloseMembersMenu = () => {
+    setMembersAnchorEL(null);
+    setOpenMembersMenu(false);
+    setIsMouseOverMembersMenu(false);
+  };
+
+  const handleMembersMenuItemClick = (e, i) => {
+    handleCloseMembersMenu();
+    setMembersMenuIndex(i);
+    setIsMouseOverMembersTab(false);
   };
 
   useEffect(() => {
@@ -115,7 +228,7 @@ export default function Header() {
 
     switch (pathname) {
       case '/':
-        setTabIndex(null);
+        setTabIndex(false);
         break;
       case '/about':
         setTabIndex(0);
@@ -147,8 +260,12 @@ export default function Header() {
   }, []);
 
   useEffect(() => {
-    myRef.current = isMouseOverAboutUsMenu;
+    isMouseOverAboutUsMenuRef.current = isMouseOverAboutUsMenu;
   }, [isMouseOverAboutUsMenu]);
+
+  useEffect(() => {
+    isMouseOverMembersMenuRef.current = isMouseOverMembersMenu;
+  }, [isMouseOverMembersMenu]);
 
   return (
     <AppBar className={classes.appbar} elevation={0} id="header">
@@ -158,7 +275,7 @@ export default function Header() {
             className={classes.logoButton}
             component={Link}
             to="/"
-            onClick={() => setTabIndex(null)}
+            onClick={() => setTabIndex(false)}
           >
             17<span className={classes.titleColor}>Marry.</span>
           </Button>
@@ -171,53 +288,37 @@ export default function Header() {
               className={classes.tabs}
               classes={{ indicator: classes.tabIndicator }}
             >
-              <Tab
-                className={classes.tab}
-                label="關於我們"
-                component={Link}
-                to="/about"
-                onMouseEnter={(e) => {
-                  if (isMouseOverAboutUsTab) return;
-                  handleMouseOver(e);
-                }}
-                onMouseOut={() => {
-                  if (openAboutUsMenu) return;
-                  setIsMouseOverAboutUsTab(false);
-                }}
-              />
-              <Tab
-                className={classes.tab}
-                label="活動"
-                component={Link}
-                to="/events"
-                onMouseEnter={() => console.log('over events')}
-              />
-              <Tab
-                className={classes.tab}
-                label="會員"
-                component={Link}
-                to="/members"
-              />
-              <Tab
-                className={classes.tab}
-                label="專案"
-                component={Link}
-                to="/plans"
-              />
-              <Tab
-                className={classes.tab}
-                label="最新消息"
-                component={Link}
-                to="/latestNews"
-              />
+              {routes.map((route, i) => {
+                return route.dataAttribute ? (
+                  <Tab
+                    className={classes.tab}
+                    label={route.label}
+                    onMouseEnter={(e) => {
+                      route.onMouseEnter(e);
+                    }}
+                    onMouseOut={(e) => route.onMouseOut(e)}
+                    key={i}
+                    data-id={route.dataAttribute}
+                  ></Tab>
+                ) : (
+                  <Tab
+                    className={classes.tab}
+                    label={route.label}
+                    component={Link}
+                    to={route.to}
+                    key={i}
+                  ></Tab>
+                );
+              })}
             </Tabs>
             <Menu
               anchorEl={aboutUsAnchorEl}
               open={openAboutUsMenu}
-              onClose={handleClose}
+              onClose={handleCloseAboutUsMenu}
               MenuListProps={{
-                onMouseLeave: handleClose,
+                onMouseLeave: handleCloseAboutUsMenuOnLeave,
                 onMouseEnter: () => {
+                  console.log(2);
                   setIsMouseOverAboutUsMenu(true);
                 },
               }}
@@ -234,54 +335,66 @@ export default function Header() {
               }}
               getContentAnchorEl={null}
             >
-              <MenuItem
-                onClick={(e) => {
-                  handleMenuItemClick(e, 0);
-                  setTabIndex(0);
-                }}
-                component={Link}
-                to="/about"
-                classes={{
-                  root: classes.menuItem,
-                  selected: classes.menuItemSelected,
-                }}
-                selected={aboutUsMenuIndex === 0 && tabIndex === 0}
-                key={0}
-              >
-                公司理念
-              </MenuItem>
-              <MenuItem
-                onClick={(e) => {
-                  handleMenuItemClick(e, 1);
-                  setTabIndex(0);
-                }}
-                component={Link}
-                to="/contact"
-                classes={{
-                  root: classes.menuItem,
-                  selected: classes.menuItemSelected,
-                }}
-                selected={aboutUsMenuIndex === 1 && tabIndex === 0}
-                key={1}
-              >
-                聯絡我們
-              </MenuItem>
-              <MenuItem
-                onClick={(e) => {
-                  handleMenuItemClick(e, 2);
-                  setTabIndex(0);
-                }}
-                component={Link}
-                to="/location"
-                classes={{
-                  root: classes.menuItem,
-                  selected: classes.menuItemSelected,
-                }}
-                selected={aboutUsMenuIndex === 2 && tabIndex === 0}
-                key={2}
-              >
-                公司地址
-              </MenuItem>
+              {aboutUsMenuOptions.map((option, i) => (
+                <MenuItem
+                  onClick={(e) => {
+                    handleAboutUsMenuItemClick(e, i);
+                    setTabIndex(0);
+                  }}
+                  component={Link}
+                  to={option.to}
+                  classes={{
+                    root: classes.menuItem,
+                    selected: classes.menuItemSelected,
+                  }}
+                  selected={aboutUsMenuIndex === i && tabIndex === 0}
+                  key={i}
+                >
+                  {option.label}
+                </MenuItem>
+              ))}
+            </Menu>
+            <Menu
+              anchorEl={membersAnchorEL}
+              open={openMembersMenu}
+              onClose={handleCloseMembersMenu}
+              MenuListProps={{
+                onMouseLeave: handleCloseMembersMenu,
+                onMouseEnter: () => {
+                  setIsMouseOverMembersMenu(true);
+                },
+              }}
+              classes={{ paper: classes.menu }}
+              elevation={0}
+              keepMounted
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'center',
+              }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'center',
+              }}
+              getContentAnchorEl={null}
+            >
+              {membersMenuOptions.map((option, i) => (
+                <MenuItem
+                  onClick={(e) => {
+                    handleMembersMenuItemClick(e, i);
+                    setTabIndex(2);
+                  }}
+                  component={Link}
+                  to={option.to}
+                  classes={{
+                    root: classes.menuItem,
+                    selected: classes.menuItemSelected,
+                  }}
+                  selected={aboutUsMenuIndex === i && tabIndex === 2}
+                  key={i}
+                >
+                  {option.label}
+                </MenuItem>
+              ))}
             </Menu>
           </>
         ) : null}
