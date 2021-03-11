@@ -75,6 +75,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const aboutUsTabDatasetId = 'aboutUsTab';
+const membersTabDatasetId = 'membersTab';
+const latestNewsTabDatasetId = 'latestNewsTab';
 
 export default function Header() {
   const classes = useStyles();
@@ -100,11 +102,36 @@ export default function Header() {
   const isMouseOverAboutUsMenuRef = useRef();
 
   const [membersMenuIndex, setMembersMenuIndex] = useState(null);
-  const [membersAnchorEL, setMembersAnchorEL] = useState(null);
-  const [openMembersMenu, setOpenMembersMenu] = useState(false);
-  const [isMouseOverMembersMenu, setIsMouseOverMembersMenu] = useState(false);
-  const [isMouseOverMembersTab, setIsMouseOverMembersTab] = useState(false);
+  const [membersAnchorEl, setMembersAnchorEl] = useState(null);
+  const [openMembersMenu, setOpenMembersMenu] = useStateWithLabel(
+    false,
+    'openMembersMenu'
+  );
+  const [isMouseOverMembersMenu, setIsMouseOverMembersMenu] = useStateWithLabel(
+    false,
+    'isMouseOverMembersMenu'
+  );
+  const [isMouseOverMembersTab, setIsMouseOverMembersTab] = useStateWithLabel(
+    false,
+    'isMouseOverMembersTab'
+  );
   const isMouseOverMembersMenuRef = useRef();
+
+  const [latestNewsMenuIndex, setLatestNewsMenuIndex] = useState(null);
+  const [latestNewsAnchorEl, setLatestNewsAnchorEl] = useState(null);
+  const [openLatestNewsMenu, setOpenLatestNewsMenu] = useStateWithLabel(
+    false,
+    'openLatestNewsMenu'
+  );
+  const [
+    isMouseOverLatestNewsMenu,
+    setIsMouseOverLatestNewsMenu,
+  ] = useStateWithLabel(false, 'isMouseOverLatestNewsMenu');
+  const [
+    isMouseOverLatestNewsTab,
+    setIsMouseOverLatestNewsTab,
+  ] = useStateWithLabel(false, 'isMouseOverLatestNewsTab');
+  const isMouseOverLatestNewsMenuRef = useRef();
 
   const routes = [
     {
@@ -122,10 +149,17 @@ export default function Header() {
         handleMouseOverMembersTab(e);
       },
       onMouseOut: () => {},
-      dataAttribute: 'membersTab',
+      dataAttribute: membersTabDatasetId,
     },
     { label: '專案', to: '/plans' },
-    { label: '最新消息', to: '/latestNews' },
+    {
+      label: '最新消息',
+      onMouseEnter: (e) => {
+        handleMouseOverLatestNewsTab(e);
+      },
+      onMouseOut: (e) => {},
+      dataAttribute: latestNewsTabDatasetId,
+    },
   ];
 
   const aboutUsMenuOptions = [
@@ -136,17 +170,16 @@ export default function Header() {
 
   const membersMenuOptions = [
     { to: '/members', label: '俊男美女' },
-    { to: 'requirements', label: '入會條件' },
+    { to: '/requirements', label: '入會條件' },
   ];
 
   const latestNewsMenuOptions = [
     { to: '/news', label: '公告' },
-    { to: 'articles', label: '心得文章' },
+    { to: '/articles', label: '心得文章' },
   ];
 
   const handleMouseOverAboutUsTab = (event) => {
     setAboutUsAnchorEl(event.currentTarget);
-    console.log('??');
     setOpenAboutUsMenu(true);
     setIsMouseOverAboutUsTab(true);
 
@@ -161,7 +194,6 @@ export default function Header() {
 
       if (!test) {
         setIsMouseOverAboutUsTab(false);
-        console.log(1);
         setOpenAboutUsMenu(false);
         document.removeEventListener('mousemove', mousemoveCallback);
       }
@@ -177,7 +209,6 @@ export default function Header() {
 
     const mousemoveCallback = (e) => {
       const elements = document.elementsFromPoint(e.clientX, e.clientY);
-      console.log(elements);
       const test = elements.some(
         (ele) => ele.dataset.id === aboutUsTabDatasetId
       );
@@ -206,13 +237,53 @@ export default function Header() {
   };
 
   const handleMouseOverMembersTab = (event) => {
-    setMembersAnchorEL(event.currentTarget);
+    setMembersAnchorEl(event.currentTarget);
     setOpenMembersMenu(true);
     setIsMouseOverMembersTab(true);
+
+    const mousemoveCallback = (e) => {
+      const elements = document.elementsFromPoint(e.clientX, e.clientY);
+
+      const test = elements.some(
+        (ele) =>
+          ele.dataset.id === membersTabDatasetId ||
+          ele.classList.contains('MuiMenu-list')
+      );
+
+      if (!test) {
+        setIsMouseOverMembersTab(false);
+        setOpenMembersMenu(false);
+        document.removeEventListener('mousemove', mousemoveCallback);
+      }
+    };
+
+    setTimeout(() => {
+      document.addEventListener('mousemove', mousemoveCallback);
+    }, 100);
+  };
+
+  const handleCloseMembersMenuOnLeave = () => {
+    setIsMouseOverMembersMenu(false);
+
+    const mousemoveCallback = (e) => {
+      const elements = document.elementsFromPoint(e.clientX, e.clientY);
+      const test = elements.some(
+        (ele) => ele.dataset.id === membersTabDatasetId
+      );
+      if (!test) {
+        setMembersAnchorEl(null);
+        setOpenMembersMenu(false);
+      }
+      document.removeEventListener('mousemove', mousemoveCallback);
+    };
+
+    setTimeout(() => {
+      document.addEventListener('mousemove', mousemoveCallback);
+    }, 100);
   };
 
   const handleCloseMembersMenu = () => {
-    setMembersAnchorEL(null);
+    setMembersAnchorEl(null);
     setOpenMembersMenu(false);
     setIsMouseOverMembersMenu(false);
   };
@@ -221,6 +292,64 @@ export default function Header() {
     handleCloseMembersMenu();
     setMembersMenuIndex(i);
     setIsMouseOverMembersTab(false);
+  };
+
+  const handleMouseOverLatestNewsTab = (event) => {
+    setLatestNewsAnchorEl(event.currentTarget);
+    setOpenLatestNewsMenu(true);
+    setIsMouseOverLatestNewsTab(true);
+
+    const mousemoveCallback = (e) => {
+      const elements = document.elementsFromPoint(e.clientX, e.clientY);
+
+      const test = elements.some(
+        (ele) =>
+          ele.dataset.id === latestNewsTabDatasetId ||
+          ele.classList.contains('MuiMenu-list')
+      );
+
+      if (!test) {
+        setIsMouseOverLatestNewsTab(false);
+        setOpenLatestNewsMenu(false);
+        document.removeEventListener('mousemove', mousemoveCallback);
+      }
+    };
+
+    setTimeout(() => {
+      document.addEventListener('mousemove', mousemoveCallback);
+    }, 100);
+  };
+
+  const handleCloseLatestNewsMenuOnLeave = () => {
+    setIsMouseOverLatestNewsMenu(false);
+
+    const mousemoveCallback = (e) => {
+      const elements = document.elementsFromPoint(e.clientX, e.clientY);
+      const test = elements.some(
+        (ele) => ele.dataset.id === latestNewsTabDatasetId
+      );
+      if (!test) {
+        setLatestNewsAnchorEl(null);
+        setOpenLatestNewsMenu(false);
+      }
+      document.removeEventListener('mousemove', mousemoveCallback);
+    };
+
+    setTimeout(() => {
+      document.addEventListener('mousemove', mousemoveCallback);
+    }, 100);
+  };
+
+  const handleCloseLatestNewsMenu = () => {
+    setLatestNewsAnchorEl(null);
+    setOpenLatestNewsMenu(false);
+    setIsMouseOverLatestNewsMenu(false);
+  };
+
+  const handleLatestNewsMenuItemClick = (e, i) => {
+    handleCloseLatestNewsMenu();
+    setLatestNewsMenuIndex(i);
+    setIsMouseOverLatestNewsTab(false);
   };
 
   useEffect(() => {
@@ -247,12 +376,22 @@ export default function Header() {
         break;
       case '/members':
         setTabIndex(2);
+        setMembersMenuIndex(0);
+        break;
+      case '/requirements':
+        setTabIndex(2);
+        setMembersMenuIndex(1);
         break;
       case '/plans':
         setTabIndex(3);
         break;
-      case '/latestNews':
+      case '/news':
         setTabIndex(4);
+        setLatestNewsMenuIndex(0);
+        break;
+      case '/articles':
+        setTabIndex(4);
+        setLatestNewsMenuIndex(1);
         break;
       default:
         break;
@@ -266,6 +405,10 @@ export default function Header() {
   useEffect(() => {
     isMouseOverMembersMenuRef.current = isMouseOverMembersMenu;
   }, [isMouseOverMembersMenu]);
+
+  useEffect(() => {
+    isMouseOverLatestNewsMenuRef.current = isMouseOverLatestNewsMenu;
+  }, [isMouseOverLatestNewsMenu]);
 
   return (
     <AppBar className={classes.appbar} elevation={0} id="header">
@@ -318,7 +461,6 @@ export default function Header() {
               MenuListProps={{
                 onMouseLeave: handleCloseAboutUsMenuOnLeave,
                 onMouseEnter: () => {
-                  console.log(2);
                   setIsMouseOverAboutUsMenu(true);
                 },
               }}
@@ -355,11 +497,11 @@ export default function Header() {
               ))}
             </Menu>
             <Menu
-              anchorEl={membersAnchorEL}
+              anchorEl={membersAnchorEl}
               open={openMembersMenu}
               onClose={handleCloseMembersMenu}
               MenuListProps={{
-                onMouseLeave: handleCloseMembersMenu,
+                onMouseLeave: handleCloseMembersMenuOnLeave,
                 onMouseEnter: () => {
                   setIsMouseOverMembersMenu(true);
                 },
@@ -389,7 +531,49 @@ export default function Header() {
                     root: classes.menuItem,
                     selected: classes.menuItemSelected,
                   }}
-                  selected={aboutUsMenuIndex === i && tabIndex === 2}
+                  selected={membersMenuIndex === i && tabIndex === 2}
+                  key={i}
+                >
+                  {option.label}
+                </MenuItem>
+              ))}
+            </Menu>
+            <Menu
+              anchorEl={latestNewsAnchorEl}
+              open={openLatestNewsMenu}
+              onClose={handleCloseLatestNewsMenu}
+              MenuListProps={{
+                onMouseLeave: handleCloseLatestNewsMenuOnLeave,
+                onMouseEnter: () => {
+                  setIsMouseOverLatestNewsMenu(true);
+                },
+              }}
+              classes={{ paper: classes.menu }}
+              elevation={0}
+              keepMounted
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'center',
+              }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'center',
+              }}
+              getContentAnchorEl={null}
+            >
+              {latestNewsMenuOptions.map((option, i) => (
+                <MenuItem
+                  onClick={(e) => {
+                    handleLatestNewsMenuItemClick(e, i);
+                    setTabIndex(4);
+                  }}
+                  component={Link}
+                  to={option.to}
+                  classes={{
+                    root: classes.menuItem,
+                    selected: classes.menuItemSelected,
+                  }}
+                  selected={latestNewsMenuIndex === i && tabIndex === 4}
                   key={i}
                 >
                   {option.label}
