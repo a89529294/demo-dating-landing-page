@@ -18,7 +18,6 @@ import {
 } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import { Link } from 'react-router-dom';
 
 import useStateWithLabel from '../hooks/useStateWithLabel';
@@ -122,16 +121,15 @@ const aboutUsTabDatasetId = 'aboutUsTab';
 const membersTabDatasetId = 'membersTab';
 const latestNewsTabDatasetId = 'latestNewsTab';
 
-export default function Header() {
+export default function Header({
+  tabIndex,
+  setTabIndex,
+  subMenuIndex,
+  setSubMenuIndex,
+}) {
   const classes = useStyles();
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up('lg'));
-
-  const [tabIndex, setTabIndex] = useStateWithLabel(false, 'tabIndex');
-  const [subMenuIndex, setSubMenuIndex] = useStateWithLabel(
-    null,
-    'subMenuIndex'
-  );
 
   const [openDrawer, setOpenDrawer] = useStateWithLabel(false, 'openDrawer');
 
