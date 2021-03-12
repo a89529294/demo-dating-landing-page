@@ -10,10 +10,21 @@ import {
   Button,
   Menu,
   MenuItem,
+  SwipeableDrawer,
+  IconButton,
+  List,
+  ListItem,
+  ListItemText,
 } from '@material-ui/core';
+import MenuIcon from '@material-ui/icons/Menu';
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import { Link } from 'react-router-dom';
 
 import useStateWithLabel from '../hooks/useStateWithLabel';
+
+const iOS = process.browser && /iPad|iPhone|iPod/.test(navigator.userAgent);
+const headerHeight = '6.5rem';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -21,7 +32,15 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  appbar: {},
+  appbar: {
+    height: headerHeight,
+    [theme.breakpoints.up('lg')]: {
+      zIndex: theme.zIndex.appBar,
+    },
+    [theme.breakpoints.down('md')]: {
+      zIndex: theme.zIndex.modal + 1,
+    },
+  },
   icon: {
     color: '#fff',
     fontSize: '2rem',
@@ -30,6 +49,7 @@ const useStyles = makeStyles((theme) => ({
     width: '10rem',
   },
   appbarWrapper: {
+    height: '100%',
     width: '80%',
     margin: '0 auto',
   },
@@ -45,7 +65,7 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: 'auto',
     height: '3rem',
     position: 'relative',
-    zIndex: 1301,
+    zIndex: theme.zIndex.modal + 1,
   },
   tab: {
     ...theme.typography.tab,
@@ -72,6 +92,30 @@ const useStyles = makeStyles((theme) => ({
   tabIndicator: {
     backgroundColor: 'rgba(0, 0, 0, 0)',
   },
+  drawer: {
+    backgroundColor: theme.palette.primary.light,
+    top: headerHeight,
+    height: `calc(100% - ${headerHeight})`,
+    color: 'white',
+    width: '10rem',
+  },
+  drawerItem: {
+    ...theme.typography.tab,
+    color: 'white',
+    opacity: 0.7,
+  },
+  drawerItemSelected: {
+    opacity: 1,
+  },
+  drawerIconContainer: {
+    '&:hover': { backgroundColor: 'transparent' },
+    marginLeft: 'auto',
+  },
+  drawerIcon: {
+    height: 50,
+    width: 50,
+    color: 'white',
+  },
 }));
 
 const aboutUsTabDatasetId = 'aboutUsTab';
@@ -83,9 +127,14 @@ export default function Header() {
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up('lg'));
 
-  const [tabIndex, setTabIndex] = useState(false);
+  const [tabIndex, setTabIndex] = useStateWithLabel(false, 'tabIndex');
+  const [subMenuIndex, setSubMenuIndex] = useStateWithLabel(
+    null,
+    'subMenuIndex'
+  );
 
-  const [aboutUsMenuIndex, setAboutUsMenuIndex] = useState(null);
+  const [openDrawer, setOpenDrawer] = useStateWithLabel(false, 'openDrawer');
+
   const [aboutUsAnchorEl, setAboutUsAnchorEl] = useState(null);
   const [openAboutUsMenu, setOpenAboutUsMenu] = useStateWithLabel(
     false,
@@ -101,7 +150,6 @@ export default function Header() {
   );
   const isMouseOverAboutUsMenuRef = useRef();
 
-  const [membersMenuIndex, setMembersMenuIndex] = useState(null);
   const [membersAnchorEl, setMembersAnchorEl] = useState(null);
   const [openMembersMenu, setOpenMembersMenu] = useStateWithLabel(
     false,
@@ -117,7 +165,6 @@ export default function Header() {
   );
   const isMouseOverMembersMenuRef = useRef();
 
-  const [latestNewsMenuIndex, setLatestNewsMenuIndex] = useState(null);
   const [latestNewsAnchorEl, setLatestNewsAnchorEl] = useState(null);
   const [openLatestNewsMenu, setOpenLatestNewsMenu] = useStateWithLabel(
     false,
@@ -133,35 +180,6 @@ export default function Header() {
   ] = useStateWithLabel(false, 'isMouseOverLatestNewsTab');
   const isMouseOverLatestNewsMenuRef = useRef();
 
-  const routes = [
-    {
-      label: '關於我們',
-      onMouseEnter: (e) => {
-        handleMouseOverAboutUsTab(e);
-      },
-      onMouseOut: (e) => {},
-      dataAttribute: aboutUsTabDatasetId,
-    },
-    { label: '活動', to: '/events' },
-    {
-      label: '會員',
-      onMouseEnter: (e) => {
-        handleMouseOverMembersTab(e);
-      },
-      onMouseOut: () => {},
-      dataAttribute: membersTabDatasetId,
-    },
-    { label: '專案', to: '/plans' },
-    {
-      label: '最新消息',
-      onMouseEnter: (e) => {
-        handleMouseOverLatestNewsTab(e);
-      },
-      onMouseOut: (e) => {},
-      dataAttribute: latestNewsTabDatasetId,
-    },
-  ];
-
   const aboutUsMenuOptions = [
     { to: '/about', label: '公司理念' },
     { to: '/contact', label: '聯絡我們' },
@@ -176,6 +194,38 @@ export default function Header() {
   const latestNewsMenuOptions = [
     { to: '/news', label: '公告' },
     { to: '/articles', label: '心得文章' },
+  ];
+
+  const routes = [
+    {
+      label: '關於我們',
+      onMouseEnter: (e) => {
+        handleMouseOverAboutUsTab(e);
+      },
+      onMouseOut: (e) => {},
+      dataAttribute: aboutUsTabDatasetId,
+      subMenu: aboutUsMenuOptions,
+    },
+    { label: '活動', to: '/events' },
+    {
+      label: '會員',
+      onMouseEnter: (e) => {
+        handleMouseOverMembersTab(e);
+      },
+      onMouseOut: () => {},
+      dataAttribute: membersTabDatasetId,
+      subMenu: membersMenuOptions,
+    },
+    { label: '專案', to: '/plans' },
+    {
+      label: '最新消息',
+      onMouseEnter: (e) => {
+        handleMouseOverLatestNewsTab(e);
+      },
+      onMouseOut: (e) => {},
+      dataAttribute: latestNewsTabDatasetId,
+      subMenu: latestNewsMenuOptions,
+    },
   ];
 
   const handleMouseOverAboutUsTab = (event) => {
@@ -232,7 +282,7 @@ export default function Header() {
 
   const handleAboutUsMenuItemClick = (e, i) => {
     handleCloseAboutUsMenu();
-    setAboutUsMenuIndex(i);
+    setSubMenuIndex(i);
     setIsMouseOverAboutUsTab(false);
   };
 
@@ -290,7 +340,7 @@ export default function Header() {
 
   const handleMembersMenuItemClick = (e, i) => {
     handleCloseMembersMenu();
-    setMembersMenuIndex(i);
+    setSubMenuIndex(i);
     setIsMouseOverMembersTab(false);
   };
 
@@ -348,7 +398,7 @@ export default function Header() {
 
   const handleLatestNewsMenuItemClick = (e, i) => {
     handleCloseLatestNewsMenu();
-    setLatestNewsMenuIndex(i);
+    setSubMenuIndex(i);
     setIsMouseOverLatestNewsTab(false);
   };
 
@@ -358,45 +408,54 @@ export default function Header() {
     switch (pathname) {
       case '/':
         setTabIndex(false);
+        setSubMenuIndex(null);
+
         break;
       case '/about':
         setTabIndex(0);
-        setAboutUsMenuIndex(0);
+        setSubMenuIndex(0);
+
         break;
       case '/contact':
         setTabIndex(0);
-        setAboutUsMenuIndex(1);
+        setSubMenuIndex(1);
+
         break;
       case '/location':
         setTabIndex(0);
-        setAboutUsMenuIndex(2);
+        setSubMenuIndex(2);
+
         break;
       case '/events':
         setTabIndex(1);
+        setSubMenuIndex(null);
+
         break;
       case '/members':
         setTabIndex(2);
-        setMembersMenuIndex(0);
+        setSubMenuIndex(0);
         break;
       case '/requirements':
         setTabIndex(2);
-        setMembersMenuIndex(1);
+        setSubMenuIndex(1);
         break;
       case '/plans':
         setTabIndex(3);
+        setSubMenuIndex(null);
         break;
       case '/news':
         setTabIndex(4);
-        setLatestNewsMenuIndex(0);
+        setSubMenuIndex(0);
         break;
       case '/articles':
         setTabIndex(4);
-        setLatestNewsMenuIndex(1);
+        setSubMenuIndex(1);
+
         break;
       default:
         break;
     }
-  }, []);
+  }, [window.location.pathname]);
 
   useEffect(() => {
     isMouseOverAboutUsMenuRef.current = isMouseOverAboutUsMenu;
@@ -409,6 +468,85 @@ export default function Header() {
   useEffect(() => {
     isMouseOverLatestNewsMenuRef.current = isMouseOverLatestNewsMenu;
   }, [isMouseOverLatestNewsMenu]);
+
+  const [drawerMenu, setDrawerMenu] = useStateWithLabel(routes, 'drawerMenu');
+  const [inMainMenu, setInMainMenu] = useStateWithLabel(true, 'inMainMenu');
+
+  const list = () => {
+    return (
+      <List>
+        {drawerMenu.map((route, index) => {
+          const selected = inMainMenu
+            ? index === tabIndex
+            : index === subMenuIndex;
+          return (
+            <ListItem
+              button
+              key={index}
+              component={route.subMenu ? 'div' : Link}
+              {...(route.to && { to: route.to })}
+              onClick={() => {
+                if (route.subMenu) {
+                  setDrawerMenu(route.subMenu);
+                  setInMainMenu(false);
+                } else {
+                  setOpenDrawer(false);
+                  setInMainMenu(true);
+                  setDrawerMenu(routes);
+                }
+              }}
+              selected={selected}
+              divider
+            >
+              <ListItemText
+                className={
+                  selected
+                    ? [classes.drawerItemSelected, classes.drawerItem].join(' ')
+                    : classes.drawerItem
+                }
+              >
+                {route.label}
+              </ListItemText>
+            </ListItem>
+          );
+        })}
+      </List>
+    );
+  };
+
+  const drawer = (
+    <>
+      <SwipeableDrawer
+        disableBackdropTransition={!iOS}
+        disableDiscovery={iOS}
+        open={openDrawer}
+        onClose={() => setOpenDrawer(false)}
+        onOpen={() => setOpenDrawer(true)}
+        classes={{ paper: classes.drawer }}
+      >
+        {!inMainMenu && (
+          <ListItem
+            button
+            onClick={() => {
+              setInMainMenu(true);
+              setDrawerMenu(routes);
+            }}
+          >
+            <ListItemText primary="返回" className={classes.drawerItem} />
+            <ChevronLeftIcon style={{ opacity: 0.7 }} />
+          </ListItem>
+        )}
+        {list()}
+      </SwipeableDrawer>
+      <IconButton
+        className={classes.drawerIconContainer}
+        onClick={() => setOpenDrawer(!openDrawer)}
+        disableRipple
+      >
+        <MenuIcon className={classes.drawerIcon} />
+      </IconButton>
+    </>
+  );
 
   return (
     <AppBar className={classes.appbar} elevation={0} id="header">
@@ -450,6 +588,9 @@ export default function Header() {
                     component={Link}
                     to={route.to}
                     key={i}
+                    onClick={() => {
+                      setSubMenuIndex(null);
+                    }}
                   ></Tab>
                 );
               })}
@@ -489,7 +630,7 @@ export default function Header() {
                     root: classes.menuItem,
                     selected: classes.menuItemSelected,
                   }}
-                  selected={aboutUsMenuIndex === i && tabIndex === 0}
+                  selected={subMenuIndex === i && tabIndex === 0}
                   key={i}
                 >
                   {option.label}
@@ -531,7 +672,7 @@ export default function Header() {
                     root: classes.menuItem,
                     selected: classes.menuItemSelected,
                   }}
-                  selected={membersMenuIndex === i && tabIndex === 2}
+                  selected={subMenuIndex === i && tabIndex === 2}
                   key={i}
                 >
                   {option.label}
@@ -573,7 +714,7 @@ export default function Header() {
                     root: classes.menuItem,
                     selected: classes.menuItemSelected,
                   }}
-                  selected={latestNewsMenuIndex === i && tabIndex === 4}
+                  selected={subMenuIndex === i && tabIndex === 4}
                   key={i}
                 >
                   {option.label}
@@ -581,7 +722,9 @@ export default function Header() {
               ))}
             </Menu>
           </>
-        ) : null}
+        ) : (
+          drawer
+        )}
       </Toolbar>
     </AppBar>
   );
