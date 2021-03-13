@@ -133,7 +133,7 @@ export default function Footer({
                   setSubMenuIndex(2);
                 }}
               >
-                公司地址
+                服務據點
               </Grid>
             </Grid>
           </Grid>

@@ -181,7 +181,7 @@ export default function Header({
   const aboutUsMenuOptions = [
     { to: '/about', label: '公司理念' },
     { to: '/contact', label: '聯絡我們' },
-    { to: '/location', label: '公司地址' },
+    { to: '/location', label: '服務據點' },
   ];
 
   const membersMenuOptions = [

@@ -2,12 +2,8 @@ import { Grid, Typography, Grow, Slide, Button } from '@material-ui/core';
 import React, { useRef } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 
-import contactUsImage from '../assets/contactUs.png';
-import {
-  contactUsPortalTitle,
-  infoObj,
-  contactUsPortalButtonText,
-} from '../static/contactUsContent';
+import locationImage from '../assets/location.png';
+import { address, title, buttonText } from '../static/locationContent';
 import useOnScreen from '../hooks/useOnScreen';
 
 const animationLength = 1000;
@@ -15,9 +11,9 @@ const animationLength = 1000;
 const useStyles = makeStyles((theme) => ({
   root: {
     ...theme.aboutUsPortalStyle,
-    backgroundColor: theme.palette.componentBgColor.bgTwo,
+    backgroundColor: theme.palette.componentBgColor.bgOne,
   },
-  contactUsImage: {
+  locationImage: {
     width: '100%',
   },
   title: {
@@ -25,21 +21,15 @@ const useStyles = makeStyles((theme) => ({
   },
   descriptionGrid: {
     position: 'relative',
-    textAlign: 'right',
   },
   button: {
     position: 'absolute',
     bottom: '1rem',
-    left: '1rem',
-  },
-  maxContent: {
-    width: 'max-content',
-    marginLeft: 'auto',
-    textAlign: 'left',
+    right: '1rem',
   },
 }));
 
-export default function ContactUsPortal() {
+export default function LocationPortal() {
   const classes = useStyles();
   const ref = useRef();
   const isVisible = useOnScreen(ref, 0.3);
@@ -52,6 +42,15 @@ export default function ContactUsPortal() {
       spacing={2}
       ref={ref}
     >
+      <Grid lg={3} item>
+        <Grow in={isVisible} timeout={animationLength}>
+          <img
+            alt="vision"
+            src={locationImage}
+            className={classes.locationImage}
+          />
+        </Grow>
+      </Grid>
       <Grid
         item
         lg={9}
@@ -61,31 +60,20 @@ export default function ContactUsPortal() {
         className={classes.descriptionGrid}
       >
         <Slide
-          direction="right"
+          direction="left"
           in={isVisible}
           timeout={animationLength}
           mountOnEnter
           unmountOnExit
         >
-          <Typography className={classes.maxContent}>
-            <span className={classes.title}>{contactUsPortalTitle}</span> <br />
-            {infoObj.businessHours} <br />
-            電話: {infoObj.phono} <br />
-            手機: {infoObj.cellno}
+          <Typography>
+            <span className={classes.title}>{title}</span> <br />
+            {address}
           </Typography>
         </Slide>
         <Button variant="outlined" className={classes.button}>
-          {contactUsPortalButtonText}
+          {buttonText}
         </Button>
-      </Grid>
-      <Grid lg={3} item>
-        <Grow in={isVisible} timeout={animationLength}>
-          <img
-            alt="vision"
-            src={contactUsImage}
-            className={classes.contactUsImage}
-          />
-        </Grow>
       </Grid>
     </Grid>
   );

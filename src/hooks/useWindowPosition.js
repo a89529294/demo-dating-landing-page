@@ -9,7 +9,7 @@ export default function useWindowPosition(id, titleOrCard) {
       if (titleOrCard === 'title') {
         if (
           window.pageYOffset >= offetSetHeight * 0 &&
-          window.pageYOffset < offetSetHeight * 0.2
+          window.pageYOffset < offetSetHeight * 2
         ) {
           setAnimation(true);
         } else {

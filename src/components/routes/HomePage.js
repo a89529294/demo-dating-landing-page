@@ -1,8 +1,8 @@
 import React from 'react';
-import { Grid } from '@material-ui/core';
 import Hero from '../Hero';
 import AboutUsPortal from '../AboutUsPortal';
 import ContactUsPortal from '../ContactUsPortal';
+import LocationPortal from '../LocationPortal';
 
 export default function HomePage() {
   return (
@@ -21,6 +21,7 @@ export default function HomePage() {
       <Hero />
       <AboutUsPortal />
       <ContactUsPortal />
+      <LocationPortal />
     </div>
   );
 }
