@@ -4,3 +4,8 @@
 ::-webkit-scrollbar {
   display: none;
 }
+
+@font-face {
+  font-family: 'Hanyi';
+  src: local('Hanyi'), url(./fonts/HanyiSentyTang.ttf) format('truetype');
+}

@@ -8,11 +8,18 @@ import facebook from '../assets/facebook.svg';
 import twitter from '../assets/twitter.svg';
 import instagram from '../assets/instagram.svg';
 
+const footerHeightForMobile = '5rem';
+
 const useStyles = makeStyles((theme) => ({
   footer: {
     width: '100%',
     zIndex: theme.zIndex.modal + 1,
     backgroundColor: theme.palette.primary.main,
+    [theme.breakpoints.down('md')]: {
+      display: 'flex',
+      alignItems: 'center',
+      height: footerHeightForMobile,
+    },
   },
   mainContainer: {},
   link: {
@@ -32,14 +39,14 @@ const useStyles = makeStyles((theme) => ({
   icon: {
     height: '4rem',
     width: '4rem',
-    [theme.breakpoints.down('xs')]: {
-      height: '2.5rem',
-      width: '2.5rem',
+    [theme.breakpoints.down('md')]: {
+      height: `calc(${footerHeightForMobile} * 0.6)`,
+      width: `calc(${footerHeightForMobile} * 0.6)`,
     },
   },
   socialContainer: {
-    [theme.breakpoints.down('xs')]: {
-      right: '0.6rem',
+    [theme.breakpoints.down('md')]: {
+      marginRight: '0.6rem',
     },
   },
 }));

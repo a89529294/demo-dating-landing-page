@@ -10,6 +10,11 @@ const theme = createMuiTheme({
     primary: {
       main: customGrey,
     },
+    componentBgColor: {
+      bgOne: 'rgba(0, 0, 0, 0.1)',
+      bgTwo: 'rgba(0, 0, 0, 0.2)',
+      bgThree: 'rgba(0,0,0,0.3)',
+    },
   },
   typography: {
     tab: {
@@ -18,6 +23,17 @@ const theme = createMuiTheme({
       fontWeight: '700',
       fontSize: '1rem',
     },
+    homePagePortalTitle: {
+      fontFamily: 'Hanyi',
+      fontSize: '2rem',
+    },
+  },
+  aboutUsPortalStyle: {
+    marginTop: '0rem',
+    marginBottom: '0rem',
+    padding: '1rem',
+    paddingLeft: '5rem',
+    paddingRight: '5rem',
   },
 });
 

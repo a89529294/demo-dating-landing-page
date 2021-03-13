@@ -5,7 +5,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { Link as Scroll } from 'react-scroll';
 
 import useWindowPosition from '../hooks/useWindowPosition';
-import heroBg from '../assets/dating-bg.jpg';
+import heroBg from '../assets/heroBg.jpg';
 
 const useStyles = makeStyles((theme) => ({
   centerTitle: {
@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundImage: `url(${heroBg})`,
-    backgroundPosition: 'center',
+    backgroundPosition: 'top',
     backgroundRepeat: 'no-repeat',
     backgroundSize: 'cover',
   },
