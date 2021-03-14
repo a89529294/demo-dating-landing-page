@@ -37,6 +37,9 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: 'auto',
     textAlign: 'left',
   },
+  desc: {
+    ...theme.typography.homePagePortalDesc,
+  },
 }));
 
 export default function ContactUsPortal() {
@@ -69,9 +72,9 @@ export default function ContactUsPortal() {
         >
           <Typography className={classes.maxContent}>
             <span className={classes.title}>{contactUsPortalTitle}</span> <br />
-            {infoObj.businessHours} <br />
-            電話: {infoObj.phono} <br />
-            手機: {infoObj.cellno}
+            <span className={classes.desc}>{infoObj.businessHours}</span> <br />
+            <span className={classes.desc}>電話: {infoObj.phono}</span> <br />
+            <span className={classes.desc}>手機: {infoObj.cellno}</span>
           </Typography>
         </Slide>
         <Button variant="outlined" className={classes.button}>

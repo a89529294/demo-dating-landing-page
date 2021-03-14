@@ -6,6 +6,7 @@ import LocationPortal from '../LocationPortal';
 import { Collapse } from '@material-ui/core';
 import useOnScreen from '../../hooks/useOnScreen';
 import EventPortal from '../EventPortal';
+import MembersPortal from '../MembersPortal';
 
 export default function HomePage() {
   const ref = useRef();
@@ -21,9 +22,11 @@ export default function HomePage() {
       <AboutUsPortal />
       <ContactUsPortal />
       <LocationPortal />
-      <Collapse in={isVisible} timeout={2000} ref={ref}>
+      {/* <Collapse in={isVisible} timeout={2000} ref={ref}> */}
+      <Collapse in={true} timeout={2000} ref={ref}>
         <EventPortal />
       </Collapse>
+      <MembersPortal />
     </div>
   );
 }

@@ -32,6 +32,9 @@ const useStyles = makeStyles((theme) => ({
   descriptionGrid: {
     position: 'relative',
   },
+  desc: {
+    ...theme.typography.homePagePortalDesc,
+  },
 }));
 
 export default function AboutUsPortal() {
@@ -78,7 +81,9 @@ export default function AboutUsPortal() {
           mountOnEnter
           unmountOnExit
         >
-          <Typography>{aboutUsPortalContent}</Typography>
+          <Typography className={classes.desc}>
+            {aboutUsPortalContent}
+          </Typography>
         </Slide>
 
         <Button variant="outlined" className={classes.button}>

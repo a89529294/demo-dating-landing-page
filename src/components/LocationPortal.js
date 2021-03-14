@@ -27,6 +27,9 @@ const useStyles = makeStyles((theme) => ({
     bottom: '1rem',
     right: '1rem',
   },
+  desc: {
+    ...theme.typography.homePagePortalDesc,
+  },
 }));
 
 export default function LocationPortal() {
@@ -68,7 +71,7 @@ export default function LocationPortal() {
         >
           <Typography>
             <span className={classes.title}>{title}</span> <br />
-            {address}
+            <span className={classes.desc}>{address}</span>
           </Typography>
         </Slide>
         <Button variant="outlined" className={classes.button}>

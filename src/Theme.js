@@ -27,6 +27,10 @@ const theme = createMuiTheme({
       fontFamily: 'Hanyi',
       fontSize: '2rem',
     },
+    homePagePortalDesc: {
+      fontFamily: "'Noto Serif TC', serif",
+      fontWeight: 100,
+    },
   },
   aboutUsPortalStyle: {
     marginTop: '0rem',
