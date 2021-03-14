@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import Hero from '../Hero';
 import AboutUsPortal from '../AboutUsPortal';
 import ContactUsPortal from '../ContactUsPortal';
@@ -11,9 +11,12 @@ import MembersPortal from '../MembersPortal';
 export default function HomePage() {
   const ref = useRef();
   const isVisible = useOnScreen(ref, 0.3, 1000);
+  const [isVisibleOnce, setIsvisibleOnce] = useState(false);
 
   useEffect(() => {
-    console.log(isVisible);
+    if (isVisible) {
+      setIsvisibleOnce(true);
+    }
   }, [isVisible]);
 
   return (
@@ -22,8 +25,7 @@ export default function HomePage() {
       <AboutUsPortal />
       <ContactUsPortal />
       <LocationPortal />
-      {/* <Collapse in={isVisible} timeout={2000} ref={ref}> */}
-      <Collapse in={true} timeout={2000} ref={ref}>
+      <Collapse in={isVisibleOnce} timeout={1000} ref={ref}>
         <EventPortal />
       </Collapse>
       <MembersPortal />

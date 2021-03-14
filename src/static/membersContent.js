@@ -27,4 +27,6 @@ const femaleMemberInfoArr = [
   { img: f5, name: '陳小姐', age: 39, height: 150, profession: 'unemployed' },
 ];
 
-export { title, maleMemberInfoArr, femaleMemberInfoArr };
+const btnText = '更多會員';
+
+export { title, maleMemberInfoArr, femaleMemberInfoArr, btnText };

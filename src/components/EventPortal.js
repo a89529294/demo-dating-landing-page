@@ -17,6 +17,7 @@ const imageArr = [imageOne, imageTwo, imageThree];
 const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
+    padding: 10,
   },
   title: {
     ...theme.typography.homePagePortalTitle,
