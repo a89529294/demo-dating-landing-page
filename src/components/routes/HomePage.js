@@ -1,27 +1,29 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Hero from '../Hero';
 import AboutUsPortal from '../AboutUsPortal';
 import ContactUsPortal from '../ContactUsPortal';
 import LocationPortal from '../LocationPortal';
+import { Collapse } from '@material-ui/core';
+import useOnScreen from '../../hooks/useOnScreen';
+import EventPortal from '../EventPortal';
 
 export default function HomePage() {
+  const ref = useRef();
+  const isVisible = useOnScreen(ref, 0.3, 1000);
+
+  useEffect(() => {
+    console.log(isVisible);
+  }, [isVisible]);
+
   return (
-    // <Grid container direction="column" spacing={1} justify="flex-start">
-    //   <Grid xs={12} item>
-    //     <Hero />
-    //   </Grid>
-    //   <Grid xs={12} item>
-    //     <AboutUsPortal />
-    //   </Grid>
-    //   <Grid xs={12} item>
-    //     <ContactUsPortal />
-    //   </Grid>
-    // </Grid>
     <div>
       <Hero />
       <AboutUsPortal />
       <ContactUsPortal />
       <LocationPortal />
+      <Collapse in={isVisible} timeout={2000} ref={ref}>
+        <EventPortal />
+      </Collapse>
     </div>
   );
 }

@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 
-export default function useOnScreen(ref, threshold) {
+export default function useOnScreen(ref, threshold, delay = 0) {
   const [isIntersecting, setIntersecting] = useState(false);
 
   const observer = new IntersectionObserver(
     ([entry]) => {
-      setIntersecting(entry.isIntersecting);
+      setTimeout(() => {
+        setIntersecting(entry.isIntersecting);
+      }, delay);
     },
     { threshold }
   );
