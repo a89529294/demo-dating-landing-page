@@ -2,6 +2,8 @@ import { createMuiTheme } from '@material-ui/core/styles';
 
 const customGrey = 'rgba(0, 0, 0, 0.5)';
 
+const defaultTheme = createMuiTheme();
+
 const theme = createMuiTheme({
   palette: {
     common: {
@@ -38,6 +40,10 @@ const theme = createMuiTheme({
     padding: '1rem',
     paddingLeft: '5rem',
     paddingRight: '5rem',
+    [defaultTheme.breakpoints.down('sm')]: {
+      paddingLeft: '1rem',
+      paddingRight: '1rem',
+    },
   },
 });
 

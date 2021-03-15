@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Grow, IconButton } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { Link as Scroll } from 'react-scroll';
+import { useInView } from 'react-intersection-observer';
+import { motion, useAnimation } from 'framer-motion';
 
 import useWindowPosition from '../hooks/useWindowPosition';
 import heroBg from '../assets/heroBg.jpg';
@@ -31,24 +33,48 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Hero() {
-  const checked = useWindowPosition('header', 'title');
   const classes = useStyles();
+  const controls = useAnimation();
+  const { ref, inView, entry } = useInView({
+    threshold: 0.1,
+  });
+
+  const imgVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { duration: 2 },
+    },
+  };
+
+  useEffect(() => {
+    if (inView) {
+      controls.start('visible');
+    }
+    if (!inView) {
+      controls.start('hidden');
+    }
+  }, [controls, inView]);
 
   return (
-    <div className={classes.heroContainer}>
-      <Grow in={checked} {...(checked ? { timeout: 1000 } : {})}>
-        <div className={classes.container}>
+    <div className={classes.heroContainer} ref={ref}>
+      <div className={classes.container}>
+        <motion.div initial="hidden" animate={controls} variants={imgVariants}>
           <h1 className={classes.centerTitle}>
             Welcome to <br /> 17
             <span className={classes.titleColor}>Marry.</span>
           </h1>
-          <Scroll to="place-to-visit" smooth={true}>
-            <IconButton>
-              <ExpandMoreIcon className={classes.goDown} />
-            </IconButton>
-          </Scroll>
-        </div>
-      </Grow>
+        </motion.div>
+        {/* <h1 className={classes.centerTitle}>
+          Welcome to <br /> 17
+          <span className={classes.titleColor}>Marry.</span>
+        </h1> */}
+        <Scroll to="place-to-visit" smooth={true}>
+          <IconButton>
+            <ExpandMoreIcon className={classes.goDown} />
+          </IconButton>
+        </Scroll>
+      </div>
     </div>
   );
 }

@@ -7,14 +7,9 @@ const paragraphArr = [
   '是興趣，也是責任，17MARRY邁入第十年了，感謝各界菁英們的肯定，我們會繼續堅持讓17MARRY成為一間讓會員安心、放心，有良心的婚友社。',
 ];
 
-const aboutUsPortalTitle = '您尋找另一半的嚮導';
-const aboutUsPortalContent =
+const aboutUsTitle = '您尋找另一半的嚮導';
+const aboutUsContent =
   '在這個忙碌的工商社會，我們知道你無暇在APP虛幻空間浪費生命';
-const aboutUsPortalButtonText = '公司理念';
+const aboutUsBtnText = '公司理念';
 
-export {
-  paragraphArr,
-  aboutUsPortalTitle,
-  aboutUsPortalContent,
-  aboutUsPortalButtonText,
-};
+export { paragraphArr, aboutUsTitle, aboutUsContent, aboutUsBtnText };

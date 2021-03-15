@@ -15,6 +15,7 @@ import {
   List,
   ListItem,
   ListItemText,
+  useScrollTrigger,
 } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
@@ -24,6 +25,19 @@ import useStateWithLabel from '../hooks/useStateWithLabel';
 
 const iOS = process.browser && /iPad|iPhone|iPod/.test(navigator.userAgent);
 const headerHeight = '6.5rem';
+
+function ElevationScroll(props) {
+  const { children } = props;
+
+  const trigger = useScrollTrigger({
+    disableHysteresis: true,
+    threshold: 0,
+  });
+
+  return React.cloneElement(children, {
+    elevation: trigger ? 4 : 0,
+  });
+}
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -46,11 +60,23 @@ const useStyles = makeStyles((theme) => ({
   },
   appbarTitle: {
     width: '10rem',
+    [theme.breakpoints.down('md')]: {
+      width: '5rem',
+    },
+  },
+  logoButton: {
+    fontSize: '2rem',
+    textTransform: 'none',
+    color: 'white',
+    [theme.breakpoints.down('md')]: {
+      fontSize: '1rem',
+    },
   },
   appbarWrapper: {
     height: '100%',
     width: '80%',
     margin: '0 auto',
+    justifyContent: 'space-between',
   },
   titleColor: {
     color: theme.palette.common.green,
@@ -61,7 +87,6 @@ const useStyles = makeStyles((theme) => ({
   },
   goDown: { color: '#5AFF3D', fontSize: '2rem' },
   tabs: {
-    marginLeft: 'auto',
     height: '3rem',
     position: 'relative',
     zIndex: theme.zIndex.modal + 1,
@@ -72,11 +97,7 @@ const useStyles = makeStyles((theme) => ({
     minWidth: 10,
     marginLeft: 25,
   },
-  logoButton: {
-    fontSize: '2rem',
-    textTransform: 'none',
-    color: 'white',
-  },
+
   menu: {
     backgroundColor: theme.palette.primary.main,
     color: 'white',
@@ -108,7 +129,6 @@ const useStyles = makeStyles((theme) => ({
   },
   drawerIconContainer: {
     '&:hover': { backgroundColor: 'transparent' },
-    marginLeft: 'auto',
   },
   drawerIcon: {
     height: 50,
@@ -129,7 +149,7 @@ export default function Header({
 }) {
   const classes = useStyles();
   const theme = useTheme();
-  const matches = useMediaQuery(theme.breakpoints.up('lg'));
+  const matches = useMediaQuery(theme.breakpoints.down('md'));
 
   const [openDrawer, setOpenDrawer] = useStateWithLabel(false, 'openDrawer');
 
@@ -547,183 +567,186 @@ export default function Header({
   );
 
   return (
-    <AppBar className={classes.appbar} elevation={0} id="header">
-      <Toolbar className={classes.appbarWrapper}>
-        <h1 className={classes.appbarTitle}>
-          <Button
-            className={classes.logoButton}
-            component={Link}
-            to="/"
-            onClick={() => setTabIndex(false)}
-          >
-            17<span className={classes.titleColor}>Marry.</span>
-          </Button>
-        </h1>
-        {matches ? (
-          <>
-            <Tabs
-              value={tabIndex}
-              onChange={(e, i) => setTabIndex(i)}
-              className={classes.tabs}
-              classes={{ indicator: classes.tabIndicator }}
+    <ElevationScroll>
+      <AppBar className={classes.appbar} position="fixed" id="header">
+        <Toolbar className={classes.appbarWrapper} disableGutters>
+          <h1 className={classes.appbarTitle}>
+            <Button
+              className={classes.logoButton}
+              component={Link}
+              to="/"
+              onClick={() => setTabIndex(false)}
             >
-              {routes.map((route, i) => {
-                return route.dataAttribute ? (
-                  <Tab
-                    className={classes.tab}
-                    label={route.label}
-                    onMouseEnter={(e) => {
-                      route.onMouseEnter(e);
+              17<span className={classes.titleColor}>Marry.</span>
+            </Button>
+          </h1>
+          {drawer}
+          {/* {!matches ? (
+            <>
+              <Tabs
+                value={tabIndex}
+                onChange={(e, i) => setTabIndex(i)}
+                className={classes.tabs}
+                classes={{ indicator: classes.tabIndicator }}
+              >
+                {routes.map((route, i) => {
+                  return route.dataAttribute ? (
+                    <Tab
+                      className={classes.tab}
+                      label={route.label}
+                      onMouseEnter={(e) => {
+                        route.onMouseEnter(e);
+                      }}
+                      onMouseOut={(e) => route.onMouseOut(e)}
+                      key={i}
+                      data-id={route.dataAttribute}
+                    ></Tab>
+                  ) : (
+                    <Tab
+                      className={classes.tab}
+                      label={route.label}
+                      component={Link}
+                      to={route.to}
+                      key={i}
+                      onClick={() => {
+                        setSubMenuIndex(null);
+                      }}
+                    ></Tab>
+                  );
+                })}
+              </Tabs>
+              <Menu
+                anchorEl={aboutUsAnchorEl}
+                open={openAboutUsMenu}
+                onClose={handleCloseAboutUsMenu}
+                MenuListProps={{
+                  onMouseLeave: handleCloseAboutUsMenuOnLeave,
+                  onMouseEnter: () => {
+                    setIsMouseOverAboutUsMenu(true);
+                  },
+                }}
+                classes={{ paper: classes.menu }}
+                elevation={0}
+                keepMounted
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'center',
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'center',
+                }}
+                getContentAnchorEl={null}
+              >
+                {aboutUsMenuOptions.map((option, i) => (
+                  <MenuItem
+                    onClick={(e) => {
+                      handleAboutUsMenuItemClick(e, i);
+                      setTabIndex(0);
                     }}
-                    onMouseOut={(e) => route.onMouseOut(e)}
-                    key={i}
-                    data-id={route.dataAttribute}
-                  ></Tab>
-                ) : (
-                  <Tab
-                    className={classes.tab}
-                    label={route.label}
                     component={Link}
-                    to={route.to}
-                    key={i}
-                    onClick={() => {
-                      setSubMenuIndex(null);
+                    to={option.to}
+                    classes={{
+                      root: classes.menuItem,
+                      selected: classes.menuItemSelected,
                     }}
-                  ></Tab>
-                );
-              })}
-            </Tabs>
-            <Menu
-              anchorEl={aboutUsAnchorEl}
-              open={openAboutUsMenu}
-              onClose={handleCloseAboutUsMenu}
-              MenuListProps={{
-                onMouseLeave: handleCloseAboutUsMenuOnLeave,
-                onMouseEnter: () => {
-                  setIsMouseOverAboutUsMenu(true);
-                },
-              }}
-              classes={{ paper: classes.menu }}
-              elevation={0}
-              keepMounted
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'center',
-              }}
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'center',
-              }}
-              getContentAnchorEl={null}
-            >
-              {aboutUsMenuOptions.map((option, i) => (
-                <MenuItem
-                  onClick={(e) => {
-                    handleAboutUsMenuItemClick(e, i);
-                    setTabIndex(0);
-                  }}
-                  component={Link}
-                  to={option.to}
-                  classes={{
-                    root: classes.menuItem,
-                    selected: classes.menuItemSelected,
-                  }}
-                  selected={subMenuIndex === i && tabIndex === 0}
-                  key={i}
-                >
-                  {option.label}
-                </MenuItem>
-              ))}
-            </Menu>
-            <Menu
-              anchorEl={membersAnchorEl}
-              open={openMembersMenu}
-              onClose={handleCloseMembersMenu}
-              MenuListProps={{
-                onMouseLeave: handleCloseMembersMenuOnLeave,
-                onMouseEnter: () => {
-                  setIsMouseOverMembersMenu(true);
-                },
-              }}
-              classes={{ paper: classes.menu }}
-              elevation={0}
-              keepMounted
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'center',
-              }}
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'center',
-              }}
-              getContentAnchorEl={null}
-            >
-              {membersMenuOptions.map((option, i) => (
-                <MenuItem
-                  onClick={(e) => {
-                    handleMembersMenuItemClick(e, i);
-                    setTabIndex(2);
-                  }}
-                  component={Link}
-                  to={option.to}
-                  classes={{
-                    root: classes.menuItem,
-                    selected: classes.menuItemSelected,
-                  }}
-                  selected={subMenuIndex === i && tabIndex === 2}
-                  key={i}
-                >
-                  {option.label}
-                </MenuItem>
-              ))}
-            </Menu>
-            <Menu
-              anchorEl={latestNewsAnchorEl}
-              open={openLatestNewsMenu}
-              onClose={handleCloseLatestNewsMenu}
-              MenuListProps={{
-                onMouseLeave: handleCloseLatestNewsMenuOnLeave,
-                onMouseEnter: () => {
-                  setIsMouseOverLatestNewsMenu(true);
-                },
-              }}
-              classes={{ paper: classes.menu }}
-              elevation={0}
-              keepMounted
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'center',
-              }}
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'center',
-              }}
-              getContentAnchorEl={null}
-            >
-              {latestNewsMenuOptions.map((option, i) => (
-                <MenuItem
-                  onClick={(e) => {
-                    handleLatestNewsMenuItemClick(e, i);
-                    setTabIndex(4);
-                  }}
-                  component={Link}
-                  to={option.to}
-                  classes={{
-                    root: classes.menuItem,
-                    selected: classes.menuItemSelected,
-                  }}
-                  selected={subMenuIndex === i && tabIndex === 4}
-                  key={i}
-                >
-                  {option.label}
-                </MenuItem>
-              ))}
-            </Menu>
-          </>
-        ) : (
-          drawer
-        )}
-      </Toolbar>
-    </AppBar>
+                    selected={subMenuIndex === i && tabIndex === 0}
+                    key={i}
+                  >
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </Menu>
+              <Menu
+                anchorEl={membersAnchorEl}
+                open={openMembersMenu}
+                onClose={handleCloseMembersMenu}
+                MenuListProps={{
+                  onMouseLeave: handleCloseMembersMenuOnLeave,
+                  onMouseEnter: () => {
+                    setIsMouseOverMembersMenu(true);
+                  },
+                }}
+                classes={{ paper: classes.menu }}
+                elevation={0}
+                keepMounted
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'center',
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'center',
+                }}
+                getContentAnchorEl={null}
+              >
+                {membersMenuOptions.map((option, i) => (
+                  <MenuItem
+                    onClick={(e) => {
+                      handleMembersMenuItemClick(e, i);
+                      setTabIndex(2);
+                    }}
+                    component={Link}
+                    to={option.to}
+                    classes={{
+                      root: classes.menuItem,
+                      selected: classes.menuItemSelected,
+                    }}
+                    selected={subMenuIndex === i && tabIndex === 2}
+                    key={i}
+                  >
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </Menu>
+              <Menu
+                anchorEl={latestNewsAnchorEl}
+                open={openLatestNewsMenu}
+                onClose={handleCloseLatestNewsMenu}
+                MenuListProps={{
+                  onMouseLeave: handleCloseLatestNewsMenuOnLeave,
+                  onMouseEnter: () => {
+                    setIsMouseOverLatestNewsMenu(true);
+                  },
+                }}
+                classes={{ paper: classes.menu }}
+                elevation={0}
+                keepMounted
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'center',
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'center',
+                }}
+                getContentAnchorEl={null}
+              >
+                {latestNewsMenuOptions.map((option, i) => (
+                  <MenuItem
+                    onClick={(e) => {
+                      handleLatestNewsMenuItemClick(e, i);
+                      setTabIndex(4);
+                    }}
+                    component={Link}
+                    to={option.to}
+                    classes={{
+                      root: classes.menuItem,
+                      selected: classes.menuItemSelected,
+                    }}
+                    selected={subMenuIndex === i && tabIndex === 4}
+                    key={i}
+                  >
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </Menu>
+            </>
+          ) : (
+            drawer
+          )} */}
+        </Toolbar>
+      </AppBar>
+    </ElevationScroll>
   );
 }

@@ -1,5 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
+
 import Hero from '../Hero';
+import PortalTypeOne from '../PortalTypeOne';
 import AboutUsPortal from '../AboutUsPortal';
 import ContactUsPortal from '../ContactUsPortal';
 import LocationPortal from '../LocationPortal';
@@ -7,6 +9,13 @@ import { Collapse } from '@material-ui/core';
 import useOnScreen from '../../hooks/useOnScreen';
 import EventPortal from '../EventPortal';
 import MembersPortal from '../MembersPortal';
+
+import {
+  aboutUsTitle,
+  aboutUsContent,
+  aboutUsBtnText,
+} from '../../static/aboutUsContent';
+import visionImage from '../../assets/vision.jpg';
 
 export default function HomePage() {
   // const ref = useRef();
@@ -22,7 +31,14 @@ export default function HomePage() {
   return (
     <div>
       <Hero />
-      <AboutUsPortal />
+      {/* <div style={{ height: '200vh' }}></div> */}
+      <PortalTypeOne
+        title={aboutUsTitle}
+        content={aboutUsContent}
+        btnText={aboutUsBtnText}
+        imgSrc={visionImage}
+      />
+      {/* <AboutUsPortal /> */}
       {/* <ContactUsPortal />
       <LocationPortal />
       <Collapse in={isVisibleOnce} timeout={1000} ref={ref}>
