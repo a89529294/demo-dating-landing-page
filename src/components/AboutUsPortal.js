@@ -8,8 +8,9 @@ import {
 } from '../static/aboutUsContent';
 import visionImage from '../assets/vision.jpg';
 import { Grid, Typography, Grow, Slide } from '@material-ui/core';
+import { useInView } from 'react-intersection-observer';
 
-import useOnScreen from '../hooks/useOnScreen';
+// import useOnScreen from '../hooks/useOnScreen';
 
 const animationLength = 1000;
 
@@ -17,6 +18,10 @@ const useStyles = makeStyles((theme) => ({
   root: {
     ...theme.aboutUsPortalStyle,
     backgroundColor: theme.palette.componentBgColor.bgOne,
+    [theme.breakpoints.down('sm')]: {
+      width: '100%',
+      height: '50vh',
+    },
   },
   vision: {
     width: '100%',
@@ -39,8 +44,11 @@ const useStyles = makeStyles((theme) => ({
 
 export default function AboutUsPortal() {
   const classes = useStyles();
-  const ref = useRef();
-  const isVisible = useOnScreen(ref, 0.3);
+  const { ref, inView, entry } = useInView({
+    threshold: 0.9,
+  });
+
+  console.log(inView);
 
   return (
     <Grid
@@ -51,7 +59,7 @@ export default function AboutUsPortal() {
       ref={ref}
     >
       <Grid item lg={3}>
-        <Grow in={isVisible} timeout={animationLength}>
+        <Grow in={inView} timeout={animationLength}>
           <img alt="vision" src={visionImage} className={classes.vision} />
         </Grow>
       </Grid>
@@ -63,27 +71,15 @@ export default function AboutUsPortal() {
         justify="center"
         className={classes.descriptionGrid}
       >
-        <Slide
-          direction="left"
-          in={isVisible}
-          timeout={animationLength}
-          mountOnEnter
-          unmountOnExit
-        >
-          <Typography className={classes.title}>
-            {aboutUsPortalTitle}
-          </Typography>
-        </Slide>
-        <Slide
-          direction="left"
-          in={isVisible}
-          timeout={animationLength}
-          mountOnEnter
-          unmountOnExit
-        >
-          <Typography className={classes.desc}>
-            {aboutUsPortalContent}
-          </Typography>
+        <Slide direction="left" in={inView} timeout={animationLength}>
+          <div>
+            <Typography className={classes.title}>
+              {aboutUsPortalTitle}
+            </Typography>
+            <Typography className={classes.desc}>
+              {aboutUsPortalContent}
+            </Typography>
+          </div>
         </Slide>
 
         <Button variant="outlined" className={classes.button}>

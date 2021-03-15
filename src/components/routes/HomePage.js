@@ -9,26 +9,26 @@ import EventPortal from '../EventPortal';
 import MembersPortal from '../MembersPortal';
 
 export default function HomePage() {
-  const ref = useRef();
-  const isVisible = useOnScreen(ref, 0.3, 1000);
-  const [isVisibleOnce, setIsvisibleOnce] = useState(false);
+  // const ref = useRef();
+  // const isVisible = useOnScreen(ref, 0.3, 1000);
+  // const [isVisibleOnce, setIsvisibleOnce] = useState(false);
 
-  useEffect(() => {
-    if (isVisible) {
-      setIsvisibleOnce(true);
-    }
-  }, [isVisible]);
+  // useEffect(() => {
+  //   if (isVisible) {
+  //     setIsvisibleOnce(true);
+  //   }
+  // }, [isVisible]);
 
   return (
     <div>
       <Hero />
       <AboutUsPortal />
-      <ContactUsPortal />
+      {/* <ContactUsPortal />
       <LocationPortal />
       <Collapse in={isVisibleOnce} timeout={1000} ref={ref}>
         <EventPortal />
       </Collapse>
-      <MembersPortal />
+      <MembersPortal /> */}
     </div>
   );
 }

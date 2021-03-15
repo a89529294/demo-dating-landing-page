@@ -104,11 +104,13 @@ export default function MembersPortal() {
       <Grid item xs={12}>
         <Typography className={classes.title}>{title}</Typography>
       </Grid>
-      <Grid item lg={2} className={classes.carouselContainer}>
+      <Grid item xs={7} md={5} lg={2} className={classes.carouselContainer}>
         <SwiperCube infoArr={maleMemberInfoArr} setIndex={setMaleIndex} />
       </Grid>
       <Grid
         item
+        xs={7}
+        md={5}
         lg={3}
         className={classes.memberDesc}
         direction="column"
@@ -118,6 +120,8 @@ export default function MembersPortal() {
       </Grid>
       <Grid
         item
+        xs={7}
+        md={5}
         lg={3}
         className={classes.memberDesc}
         direction="column"
@@ -125,7 +129,7 @@ export default function MembersPortal() {
       >
         <Desc arr={femaleMemberInfoArr} index={femaleIndex} />
       </Grid>
-      <Grid item lg={2} className={classes.carouselContainer}>
+      <Grid item xs={7} md={5} lg={2} className={classes.carouselContainer}>
         <SwiperCube infoArr={femaleMemberInfoArr} setIndex={setFemaleIndex} />
       </Grid>
       <Grid item xs={12} />
