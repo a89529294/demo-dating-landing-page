@@ -15,7 +15,20 @@ import {
   aboutUsContent,
   aboutUsBtnText,
 } from '../../static/aboutUsContent';
+import {
+  infoObj,
+  contactUsTitle,
+  contactUsBtnText,
+} from '../../static/contactUsContent';
+import {
+  locationBtnText,
+  locationContent,
+  locationTitle,
+} from '../../static/locationContent';
+
 import visionImage from '../../assets/vision.jpg';
+import contactUsImage from '../../assets/contactUs.png';
+import locationImage from '../../assets/location.png';
 
 export default function HomePage() {
   // const ref = useRef();
@@ -31,14 +44,26 @@ export default function HomePage() {
   return (
     <div>
       <Hero />
-      {/* <div style={{ height: '200vh' }}></div> */}
       <PortalTypeOne
         title={aboutUsTitle}
         content={aboutUsContent}
         btnText={aboutUsBtnText}
         imgSrc={visionImage}
       />
-      {/* <AboutUsPortal /> */}
+      <PortalTypeOne
+        title={contactUsTitle}
+        content={infoObj.businessHours}
+        btnText={contactUsBtnText}
+        imgSrc={contactUsImage}
+        imgLocation="right"
+      />
+      <PortalTypeOne
+        title={locationTitle}
+        content={locationContent}
+        btnText={locationBtnText}
+        imgSrc={locationImage}
+      />
+
       {/* <ContactUsPortal />
       <LocationPortal />
       <Collapse in={isVisibleOnce} timeout={1000} ref={ref}>

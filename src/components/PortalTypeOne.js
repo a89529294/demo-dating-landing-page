@@ -16,6 +16,9 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     ...theme.typography.homePagePortalTitle,
+    [theme.breakpoints.down('md')]: {
+      textAlign: 'center',
+    },
   },
   button: {
     position: 'absolute',
@@ -24,17 +27,23 @@ const useStyles = makeStyles((theme) => ({
   },
   descriptionGrid: {
     position: 'relative',
+  },
+  desc: {
+    ...theme.typography.homePagePortalDesc,
     [theme.breakpoints.down('md')]: {
       textAlign: 'center',
     },
   },
-  desc: {
-    ...theme.typography.homePagePortalDesc,
-  },
   smallScreenButton: {},
 }));
 
-export default function PortalTypeOne({ title, content, btnText, imgSrc }) {
+export default function PortalTypeOne({
+  title,
+  content,
+  btnText,
+  imgSrc,
+  imgLocation = 'left',
+}) {
   const classes = useStyles();
   const theme = useTheme();
   const controls = useAnimation();
@@ -53,11 +62,21 @@ export default function PortalTypeOne({ title, content, btnText, imgSrc }) {
   };
 
   const textVariants = {
-    hidden: { x: '100%' },
+    hidden: { x: imgLocation === 'left' ? '200%' : '-200%' },
     visible: {
       x: 0,
       transition: {
         duration: 2,
+      },
+    },
+  };
+
+  const textVariants2 = {
+    hidden: { x: imgLocation === 'left' ? '200%' : '-200%' },
+    visible: {
+      x: 0,
+      transition: {
+        duration: 1,
       },
     },
   };
@@ -71,6 +90,8 @@ export default function PortalTypeOne({ title, content, btnText, imgSrc }) {
     }
   }, [controls, inView]);
 
+  const imgLeft = imgLocation === 'left';
+
   return (
     <Grid
       className={classes.root}
@@ -80,7 +101,7 @@ export default function PortalTypeOne({ title, content, btnText, imgSrc }) {
       ref={ref}
       style={{ width: '100%', overflowX: 'hidden' }}
     >
-      <Grid item xs={8} md={3}>
+      <Grid item xs={8} md={3} style={{ order: imgLeft ? 0 : 1 }}>
         <motion.img
           initial="hidden"
           animate={controls}
@@ -98,25 +119,35 @@ export default function PortalTypeOne({ title, content, btnText, imgSrc }) {
         direction="column"
         justify="center"
         className={classes.descriptionGrid}
+        style={{
+          order: imgLeft ? 1 : 0,
+          textAlign: imgLeft ? 'left' : 'right',
+        }}
       >
         <motion.div initial="hidden" animate={controls} variants={textVariants}>
           <Typography className={classes.title}>{title}</Typography>
         </motion.div>
 
         <motion.div
-          animate={{ x: inView ? 0 : '100%' }}
-          transition={{ duration: 1 }}
+          initial="hidden"
+          animate={controls}
+          variants={textVariants2}
         >
           <Typography className={classes.desc}>{content}</Typography>
         </motion.div>
         {bigScreen && (
-          <Button variant="outlined" className={classes.button}>
+          <Button
+            variant="outlined"
+            className={classes.button}
+            style={imgLeft ? { right: '1rem' } : { left: '1rem' }}
+          >
             {btnText}
           </Button>
         )}
       </Grid>
+
       {smallScreen && (
-        <Grid xs={10} justify="flex-end" item container>
+        <Grid xs={10} justify="flex-end" item container style={{ order: 2 }}>
           <Button variant="outlined">{btnText}</Button>
         </Grid>
       )}
