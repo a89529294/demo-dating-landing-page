@@ -27,6 +27,15 @@
 .fade2-exit-active {
   opacity: 0;
 }
+.fade2-enter-done {
+  opacity: 0.3;
+}
+.fade2-appear {
+  opacity: 0;
+}
+.fade2-appear-active {
+  opacity: 0.3;
+}
 .fade2-enter-active,
 .fade2-exit-active {
   transition: opacity 500ms;

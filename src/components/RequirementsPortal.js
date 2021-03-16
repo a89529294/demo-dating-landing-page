@@ -25,7 +25,6 @@ const useStyles = makeStyles((theme) => ({
     position: 'relative',
   },
   rootBg: {
-    opacity: 0.3,
     position: 'absolute',
     left: 0,
     top: 0,
@@ -86,6 +85,7 @@ export default function RequirementsPortal() {
             node.addEventListener('transitionend', done, false)
           }
           classNames="fade2"
+          appear={true}
         >
           {selectedIndex ? (
             <img className={classes.rootBg} src={womenRequirementsBg} />
