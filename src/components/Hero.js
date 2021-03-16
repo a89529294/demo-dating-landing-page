@@ -6,7 +6,6 @@ import { Link as Scroll } from 'react-scroll';
 import { useInView } from 'react-intersection-observer';
 import { motion, useAnimation } from 'framer-motion';
 
-import useWindowPosition from '../hooks/useWindowPosition';
 import heroBg from '../assets/heroBg.jpg';
 
 const useStyles = makeStyles((theme) => ({

@@ -43,6 +43,7 @@ export default function PortalTypeOne({
   btnText,
   imgSrc,
   imgLocation = 'left',
+  backgroundColor,
 }) {
   const classes = useStyles();
   const theme = useTheme();
@@ -99,7 +100,13 @@ export default function PortalTypeOne({
       justify="center"
       spacing={2}
       ref={ref}
-      style={{ width: '100%', overflowX: 'hidden' }}
+      style={{
+        width: '100%',
+        overflowX: 'hidden',
+        backgroundColor: backgroundColor
+          ? backgroundColor
+          : theme.palette.componentBgColor.bgOne,
+      }}
     >
       <Grid item xs={8} md={3} style={{ order: imgLeft ? 0 : 1 }}>
         <motion.img

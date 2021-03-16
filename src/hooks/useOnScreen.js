@@ -5,13 +5,11 @@ export default function useOnScreen(ref, threshold, delay = 0) {
 
   const observer = new IntersectionObserver(
     ([entry]) => {
-      // setTimeout(() => {
-      setIntersecting(entry.isIntersecting);
-      console.log(entry);
-      console.log(observer);
-      // }, delay);
+      setTimeout(() => {
+        setIntersecting(entry.isIntersecting);
+      }, delay);
     },
-    { threshold, root: document.body }
+    { threshold }
   );
 
   useEffect(() => {

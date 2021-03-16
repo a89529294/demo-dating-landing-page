@@ -580,8 +580,8 @@ export default function Header({
               17<span className={classes.titleColor}>Marry.</span>
             </Button>
           </h1>
-          {drawer}
-          {/* {!matches ? (
+
+          {!matches ? (
             <>
               <Tabs
                 value={tabIndex}
@@ -744,7 +744,7 @@ export default function Header({
             </>
           ) : (
             drawer
-          )} */}
+          )}
         </Toolbar>
       </AppBar>
     </ElevationScroll>
